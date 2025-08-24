@@ -25,6 +25,9 @@ public class Grupo {
     @JoinColumn(name = "competicao_id", nullable = false)
     private Competicao competicao;
 
+    @OneToMany(mappedBy = "grupo")
+    private List<Jogo> jogos = new ArrayList<>();
+
     // o grupo controla a lista de equipes.
     @JsonManagedReference
     @ManyToMany

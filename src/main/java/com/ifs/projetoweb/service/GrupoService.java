@@ -28,7 +28,6 @@ public class GrupoService {
 
     @Transactional
     public List<Grupo> gerarGrupos(Long competicaoId) {
-        System.out.println("--- INICIANDO GERAÇÃO DE GRUPOS ---");
 
         Competicao competicao = competicaoRepository.findById(competicaoId)
                 .orElseThrow(() -> new RuntimeException("Competição não encontrada!"));
@@ -105,12 +104,12 @@ public class GrupoService {
         System.out.println(">> Criei " + jogosCriados + " jogos para o " + grupo.getNome());
     }
 
-    @Transactional(readOnly = true) // readOnly = true indica que este método só lê dados
+    @Transactional(readOnly = true) // readOnly = true indica que este metodo só le dados
     public List<Grupo> getGruposByCompeticao(Long competicaoId) {
         Competicao competicao = competicaoRepository.findById(competicaoId)
                 .orElseThrow(() -> new RuntimeException("Competição de diagnóstico não encontrada!"));
 
-        // Usando o método que força o carregamento das equipes para garantir
+        // usando o metodo que força o carregamento das equipes para garantir
         List<Grupo> grupos = grupoRepository.findByCompeticaoWithEquipes(competicao);
         System.out.println("DIAGNÓSTICO: Encontrados " + grupos.size() + " grupos para a competição ID " + competicaoId);
         return grupos;

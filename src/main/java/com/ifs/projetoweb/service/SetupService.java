@@ -6,9 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -43,20 +41,25 @@ public class SetupService {
         // 2. CRIA OS DADOS DE SUPORTE
         System.out.println("Criando dados de suporte...");
         Campus campus = campusRepository.save(new Campus(null, "IFS Campus Estância"));
-        Esporte esporte = esporteRepository.save(new Esporte(null, "Futsal", 5, 10));
-        Evento evento = eventoRepository.save(new Evento(null, "Jogos do Integrado 2025 - Cenário 9 Equipas", TipoNivel.INTEGRADO, new ArrayList<>()));
+        // Alterado para Ping-Pong com as novas regras
+        Esporte esporte = esporteRepository.save(new Esporte(null, "Ping-Pong", 1, 2));
+        Evento evento = eventoRepository.save(new Evento(null, "Torneio de Ping-Pong 2025", TipoNivel.INTEGRADO, new ArrayList<>()));
         Usuario coordenador = usuarioRepository.save(new Usuario(null, "Prof. Coordenador", "coord@email.com", "senha123", "111", "Coord", "2025COORD", TipoUsuario.COORDENADOR, new ArrayList<>(), new ArrayList<>()));
-        Curso curso = cursoRepository.save(new Curso(null, "Desenvolvimento de Sistemas", TipoNivel.INTEGRADO, campus, coordenador));
+        Usuario arbitro = usuarioRepository.save(new Usuario(null, "Juiz Oficial", "arbitro@email.com", "senha123", "222", "Arbitro", "2025ARBITRO", TipoUsuario.ARBITRO, new ArrayList<>(), new ArrayList<>()));
+        System.out.println("Árbitro de teste criado com matrícula: " + arbitro.getMatricula());
+
+        List<Curso> cursos = criarNoveCursos(campus, coordenador);
+
         Competicao competicao = competicaoRepository.save(new Competicao(null, evento, esporte));
 
-        // 3. CRIA OS ATLETAS E EQUIPES
-        System.out.println("Criando atletas e 9 equipes...");
-        // Aumentando o número de atletas para garantir que há jogadores suficientes
-        List<Usuario> atletasSalvos = criarAtletas(25);
-        criarNoveEquipes(curso, competicao, atletasSalvos);
-        System.out.println("Dados de teste (9 equipes) criados com sucesso.");
 
-        return "Banco de dados resetado e populado com 9 equipes. Competição de teste criada com ID: " + competicao.getId();
+        System.out.println("Criando 18 atletas e 9 equipes de Ping-Pong...");
+        // Criando o número exato de atletas necessários (9 equipes * 2 atletas)
+        List<Usuario> atletasSalvos = criarAtletas(18);
+        criarNoveEquipesDePingPong(cursos, competicao, atletasSalvos);
+        System.out.println("Dados de teste (9 equipes com cursos e atletas únicos) criados com sucesso.");
+
+        return "Banco de dados resetado e populado com 9 equipes de Ping-Pong. Competição de teste criada com ID: " + competicao.getId();
     }
 
     private List<Usuario> criarAtletas(int quantidade) {
@@ -67,26 +70,45 @@ public class SetupService {
         return usuarioRepository.saveAll(atletasParaSalvar);
     }
 
-    // Método específico para criar 9 equipes distintas
-    private void criarNoveEquipes(Curso curso, Competicao competicao, List<Usuario> atletas) {
-        if (atletas.size() < 20) {
-            throw new RuntimeException("São necessários pelo menos 20 atletas para criar as 9 equipes de teste.");
+
+    private List<Curso> criarNoveCursos(Campus campus, Usuario coordenador) {
+        List<Curso> cursosParaSalvar = new ArrayList<>();
+        String[] nomesCursos = {
+                "Desenvolvimento de Sistemas", "Eletrotécnica", "Edificações", "Química",
+                "Automação Industrial", "Petróleo e Gás", "Segurança do Trabalho",
+                "Alimentos", "Guia de Turismo"
+        };
+        for (String nome : nomesCursos) {
+            cursosParaSalvar.add(new Curso(null, nome, TipoNivel.INTEGRADO, campus, coordenador));
+        }
+        return cursoRepository.saveAll(cursosParaSalvar);
+    }
+
+
+    private void criarNoveEquipesDePingPong(List<Curso> cursos, Competicao competicao, List<Usuario> atletas) {
+        if (atletas.size() < 18 || cursos.size() < 9) {
+            throw new RuntimeException("São necessários pelo menos 18 atletas e 9 cursos para criar as 9 equipes de teste.");
         }
 
         List<Equipe> equipesParaSalvar = new ArrayList<>();
+        String[] nomesEquipes = {"Dupla Alfa", "Dupla Beta", "Dupla Gama", "Dupla Delta", "Dupla Epsilon", "Dupla Zeta", "Dupla Ômega", "Dupla Phoenix", "Dupla Hydra"};
 
-        // Equipe 1 a 5 (usando os primeiros atletas)
-        equipesParaSalvar.add(new Equipe(null, "Time Alfa", curso, atletas.get(0), List.of(atletas.get(0), atletas.get(1), atletas.get(2), atletas.get(3), atletas.get(4)), new ArrayList<>(), competicao));
-        equipesParaSalvar.add(new Equipe(null, "Time Beta", curso, atletas.get(5), List.of(atletas.get(5), atletas.get(6), atletas.get(7), atletas.get(8), atletas.get(9)), new ArrayList<>(), competicao));
-        equipesParaSalvar.add(new Equipe(null, "Time Gama", curso, atletas.get(10), List.of(atletas.get(10), atletas.get(11), atletas.get(12), atletas.get(13), atletas.get(14)), new ArrayList<>(), competicao));
+        int atletaIndex = 0;
+        for (int i = 0; i < 9; i++) {
+            // Cada equipe recebe um curso diferente
+            Curso cursoDaEquipe = cursos.get(i);
 
-        // Equipe 4 a 9 (usando atletas restantes e alguns repetidos para simular a realidade)
-        equipesParaSalvar.add(new Equipe(null, "Time Delta", curso, atletas.get(15), List.of(atletas.get(15), atletas.get(16), atletas.get(17), atletas.get(1), atletas.get(3)), new ArrayList<>(), competicao));
-        equipesParaSalvar.add(new Equipe(null, "Time Epsilon", curso, atletas.get(18), List.of(atletas.get(18), atletas.get(19), atletas.get(0), atletas.get(5), atletas.get(8)), new ArrayList<>(), competicao));
-        equipesParaSalvar.add(new Equipe(null, "Time Zeta", curso, atletas.get(20), List.of(atletas.get(20), atletas.get(21), atletas.get(6), atletas.get(11), atletas.get(13)), new ArrayList<>(), competicao));
-        equipesParaSalvar.add(new Equipe(null, "Time Ômega", curso, atletas.get(22), List.of(atletas.get(22), atletas.get(23), atletas.get(4), atletas.get(9), atletas.get(12)), new ArrayList<>(), competicao));
-        equipesParaSalvar.add(new Equipe(null, "Time Phoenix", curso, atletas.get(24), List.of(atletas.get(24), atletas.get(2), atletas.get(7), atletas.get(16), atletas.get(19)), new ArrayList<>(), competicao));
-        equipesParaSalvar.add(new Equipe(null, "Time Hydra", curso, atletas.get(1), List.of(atletas.get(1), atletas.get(10), atletas.get(15), atletas.get(20), atletas.get(23)), new ArrayList<>(), competicao));
+            // Pega o técnico (o primeiro atleta da dupla)
+            Usuario tecnico = atletas.get(atletaIndex);
+
+            // Cria a lista de 2 atletas para esta equipe (a dupla)
+            List<Usuario> atletasDaEquipe = new ArrayList<>();
+            atletasDaEquipe.add(atletas.get(atletaIndex++));
+            atletasDaEquipe.add(atletas.get(atletaIndex++));
+
+            // Adiciona a nova equipe à lista para salvar
+            equipesParaSalvar.add(new Equipe(null, nomesEquipes[i], cursoDaEquipe, tecnico, atletasDaEquipe, new ArrayList<>(), competicao));
+        }
 
         equipeRepository.saveAll(equipesParaSalvar);
     }

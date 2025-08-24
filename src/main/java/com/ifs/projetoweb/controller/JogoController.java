@@ -1,5 +1,6 @@
 package com.ifs.projetoweb.controller;
 
+import com.ifs.projetoweb.dto.FaseEliminatoriaDTO;
 import com.ifs.projetoweb.dto.PlacarDTO;
 import com.ifs.projetoweb.entity.Jogo;
 import com.ifs.projetoweb.service.JogoService;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/jogos")
 public class JogoController {
@@ -25,8 +27,15 @@ public class JogoController {
 
     // Endpoint para gerar a próxima fase de uma competição
     @PostMapping("/competicoes/{competicaoId}/gerar-fase-eliminatoria")
-    public ResponseEntity<List<Jogo>> gerarFaseEliminatoria(@PathVariable Long competicaoId) {
-        List<Jogo> jogosGerados = jogoService.gerarFaseEliminatoria(competicaoId);
-        return ResponseEntity.ok(jogosGerados);
+    public ResponseEntity<FaseEliminatoriaDTO> gerarFaseEliminatoria(@PathVariable Long competicaoId) {
+        FaseEliminatoriaDTO resultado = jogoService.gerarFaseEliminatoria(competicaoId);
+        return ResponseEntity.ok(resultado);
     }
-}
+    @GetMapping("/competicao/{competicaoId}/eliminatorias")
+    public ResponseEntity<List<Jogo>> getJogosEliminatorios(@PathVariable Long competicaoId) {
+        List<Jogo> jogos = jogoService.getJogosEliminatorios(competicaoId);
+        return ResponseEntity.ok(jogos);
+    }
+    }
+
+

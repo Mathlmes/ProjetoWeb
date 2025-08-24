@@ -26,6 +26,6 @@ public class CursoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         cursoService.delete(id);
-        return ResponseEntity.noContent().build(); // Retorna 204 No Content (sucesso sem corpo)
+        return ResponseEntity.noContent().build(); // retorna 204 No Content (sucesso sem corpo)
     }
 }

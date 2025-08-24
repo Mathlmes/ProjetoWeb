@@ -32,7 +32,9 @@ public class EquipeService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    @Transactional // Garante que ou toda a operação funciona, ou nada é salvo no banco.
+
+
+    @Transactional // garante que ou toda a operaçao funciona, ou nada é salvo no banco.
     public Equipe create(EquipeCreateDTO dto) {
 
         //orElseThrow() para parar a execução se um ID for inválido.
@@ -46,7 +48,7 @@ public class EquipeService {
                 .orElseThrow(() -> new RuntimeException("Usuário (técnico) não encontrado!"));
 
         List<Usuario> atletas = usuarioRepository.findAllById(dto.getAtletaIds());
-        // Valida se todos os atletas da lista de IDs foram encontrados
+        // valida se todos os atletas da lista de ids foram encontrados
         if (atletas.size() != dto.getAtletaIds().size()) {
             throw new RuntimeException("Um ou mais atletas da lista não foram encontrados!");
         }
@@ -66,7 +68,7 @@ public class EquipeService {
         novaEquipe.setCurso(curso);
         novaEquipe.setTecnico(tecnico);
         novaEquipe.setAtletas(atletas);
-        // Para conectar a equipe à competição
+        // para conectar a equipe a competição
         novaEquipe.setCompeticao(competicao);
 
         return equipeRepository.save(novaEquipe);

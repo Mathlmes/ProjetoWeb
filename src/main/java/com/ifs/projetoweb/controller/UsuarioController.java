@@ -6,10 +6,7 @@ import com.ifs.projetoweb.entity.Usuario;
 import com.ifs.projetoweb.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -45,5 +42,12 @@ public class UsuarioController {
         URI uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(novoArbitro.getId()).toUri();
 
         return ResponseEntity.created(uri).body(novoArbitro);
+    }
+
+    @CrossOrigin(origins = "*") // Permissão para o Flutter acessar
+    @GetMapping("/matricula/{matricula}")
+    public ResponseEntity<Usuario> getUsuarioPorMatricula(@PathVariable String matricula) {
+        Usuario usuario = usuarioService.findByMatricula(matricula);
+        return ResponseEntity.ok(usuario);
     }
 }

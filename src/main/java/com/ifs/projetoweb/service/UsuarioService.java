@@ -76,4 +76,9 @@ public Usuario criarArbitro(UsuarioDTO dto) {
 
     return usuarioRepository.save(novoUsuario);
 }
+public Usuario findByMatricula(String matricula) {
+    return usuarioRepository.findByMatricula(matricula)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado com a matrícula: " + matricula));
+}
+
 }

@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 public interface GrupoRepository extends JpaRepository<Grupo, Long> {
 
-    // NOVO MÉTODO - A SOLUÇÃO
+
     // Esta consulta força o Hibernate a buscar os grupos E as equipes de cada grupo de uma só vez.
     @Query("SELECT g FROM Grupo g JOIN FETCH g.equipes WHERE g.competicao = :competicao")
     List<Grupo> findByCompeticaoWithEquipes(@Param("competicao") Competicao competicao);

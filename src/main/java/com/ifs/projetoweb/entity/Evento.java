@@ -1,5 +1,6 @@
 package com.ifs.projetoweb.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,7 +25,7 @@ public class Evento {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TipoNivel nivel;
-    @JsonManagedReference
     @OneToMany(mappedBy = "evento") // mappedBy indica o nome do campo na classe Competicao
+    @JsonIgnoreProperties("evento")
     private List<Competicao> competicoes = new ArrayList<>();
 }

@@ -1,6 +1,7 @@
 package com.ifs.projetoweb.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -44,6 +45,7 @@ public class Jogo {
     @JoinColumn(name = "vencedor_id") // Pode ser nulo antes do fim do jogo
     private Equipe vencedor;
 
+    @JsonIgnoreProperties("jogos")
     @ManyToOne
     @JoinColumn(name = "grupo_id") // Pode ser nulo para jogos de mata-mata
     private Grupo grupo;

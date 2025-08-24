@@ -12,5 +12,5 @@ import lombok.Setter;
 public class PlacarDTO {
     private int placarEquipeA;
     private int placarEquipeB;
-    private boolean houveWO; // Para o árbitro poder informar um W.O.
+    private Long equipeIdPerdedoraWO;
 }

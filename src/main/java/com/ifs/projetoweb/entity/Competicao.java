@@ -18,7 +18,7 @@ public class Competicao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @JsonBackReference
+    //@JsonBackReference
     @ManyToOne
     @JoinColumn(name = "evento_id", nullable = false)
     private Evento evento;
